@@ -1,0 +1,94 @@
+<html>
+<head>
+<title>Hello World!</title>
+<script type='text/javascript' src='src/vendor/jquery-1.9.1.min.js'></script>
+<!-- These coffeescript files need the .js extension so we don't get mimetype errors
+on page reload. Only coffeescript files placed here need the .js -->
+<link href="src/vendor/codemirror.css" rel="stylesheet">
+<link class='theme-css' href="src/vendor/theme/vibrant-ink.css" rel="stylesheet">
+<script type='text/coffeescript' src="src/shims.coffee.js"></script>
+<script type='text/coffeescript' src="src/application.coffee.js"></script>
+<script src="src/vendor/coffee-script.js"></script>
+<script src="src/vendor/codemirror.js"></script>
+<script src="src/vendor/runmode.js"></script>
+<script src="src/vendor/mode/javascript/javascript.js"></script>
+
+</head>
+<body>
+<select class='syntax'></select>
+<select class='theme'></select>
+<div style="-webkit-app-region: drag; background-color: #eee; width: 100%">Drag me!</div>
+<div class='console'></div>
+
+<div style='white-space: pre;' class='output CodeMirror cm-s-vibrant-ink CodeMirror-wrap'></div>
+
+<script>
+  var fs = require('fs')
+  var syntaxList = $('.syntax')
+  var themeList = $('.theme')
+  var currentSyntax = 'javascript'
+  var currentTheme = 'vibrant-ink'
+
+  var modeList = fs.readdirSync('src/vendor/mode')
+  $.each(modeList, function(index, mode){
+    if(mode != '.DS_Store') {
+      el = $("<option value='"+mode+"'>"+mode+"</option>")
+      syntaxList.append(el)
+    }
+  });
+
+  var themeFileList = fs.readdirSync('src/vendor/theme')
+  $.each(themeFileList, function(index, theme){
+    if(theme != '.DS_Store') {
+      console.log(theme)
+      theme = theme.replace(/\.css/, '')
+
+      el = $("<option value='"+theme+"'>"+theme+"</option>")
+      themeList.append(el)
+    }
+  });
+
+  var renderHtml = function(syntax, theme){
+    editorContent = editor.getValue();
+    CodeMirror.runMode(editorContent, syntax || 'javascript', $('.output')[0])
+    $('.output')[0].className = "output CodeMirror CodeMirror-wrap cm-s-" + theme
+  }
+
+  var editor = CodeMirror($('.console')[0], {
+    mode: {
+      name: 'javascript',
+      useCPP: true
+    },
+    gutter: true,
+    lineNumbers: true,
+    theme: currentTheme,
+    indentUnit: 2,
+    tabSize: 2,
+    lineWrapping: true,
+    autoFocus: true,
+    onKeyEvent: function(){
+      renderHtml(currentSyntax, currentTheme)
+    }
+  })
+
+  $('.syntax').on('change', function(evt){
+    currentSyntax = $(this).find('option:selected').val()
+    editor.setOption('mode',{
+      name: currentSyntax,
+      useCPP: true
+    });
+
+    editor.refresh()
+    renderHtml(currentSyntax, currentTheme)
+  });
+
+  $('.theme').on('change', function(evt){
+    currentTheme = $(this).find('option:selected').val()
+    editor.setOption('theme',currentTheme);
+    renderHtml(currentSyntax, currentTheme)
+    $('head .theme-css').attr('href', 'src/vendor/theme/' + currentTheme + '.css')
+    editor.refresh()
+  });
+</script>
+</body>
+</html>
