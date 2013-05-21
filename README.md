@@ -4,6 +4,8 @@ to create code highlighted text. This is similar to rendering code from textmate
 in the browser and copying and pasting it, but this runs on the desktop and doesn't
 require textmate.
 
+[You can download the osx app here](http://s3.amazonaws.com/courseware.codeschool.com/keynote_code_highlighter.zip)
+
 This is super bare bones, it doesn't even have proper chrome like a close button.
 To quit the app just right click it in your doc and close it.
 
