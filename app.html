@@ -30,17 +30,32 @@ on page reload. Only coffeescript files placed here need the .js -->
   var currentTheme = 'vibrant-ink'
 
   var modeList = fs.readdirSync('src/vendor/mode')
+  var head = document.getElementsByTagName('head')[0];
   $.each(modeList, function(index, mode){
     if(mode != '.DS_Store') {
-      el = $("<option value='"+mode+"'>"+mode+"</option>")
-      syntaxList.append(el)
+      if(mode.match(/\.js/)) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'src/vendor/mode/' + mode
+        head.appendChild(script);
+      }else{
+        $.each(fs.readdirSync('src/vendor/mode/'+mode), function(index, file){
+          if(file.match(/\.js$/) && !file.match(/test\.js$/)) {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = "src/vendor/mode/"+mode+"/"+file+""
+            head.appendChild(script);
+          }
+        });
+      }
+      el = $("<option value='"+mode+"'>"+mode+"</option>");
+      syntaxList.append(el);
     }
   });
 
   var themeFileList = fs.readdirSync('src/vendor/theme')
   $.each(themeFileList, function(index, theme){
     if(theme != '.DS_Store') {
-      console.log(theme)
       theme = theme.replace(/\.css/, '')
 
       el = $("<option value='"+theme+"'>"+theme+"</option>")
