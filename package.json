@@ -4,7 +4,8 @@
 
   "window": {
     "frame": false,
-    "toolbar": true
+    "toolbar": true,
+    "height": 780
   },
 
   "environment": "development"
