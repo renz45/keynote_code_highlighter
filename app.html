@@ -19,18 +19,27 @@ on page reload. Only coffeescript files placed here need the .js -->
 <select class='theme'></select>
 <div style="-webkit-app-region: drag; background-color: #eee; width: 100%">Drag me!</div>
 <div class='console'></div>
-
-<div style='white-space: pre;' class='output CodeMirror cm-s-vibrant-ink CodeMirror-wrap'></div>
+<iframe style='width: 100%; height: 400px;'></iframe>
 
 <script>
+  var iframeDoc = $('iframe')[0].contentDocument
+  var iframeBody = $(iframeDoc).find('body')
+
   var fs = require('fs')
   var syntaxList = $('.syntax')
   var themeList = $('.theme')
-  var currentSyntax = 'javascript'
-  var currentTheme = 'vibrant-ink'
+  var currentSyntax = window.localStorage['currentSyntax'] || 'javascript'
+  var currentTheme = window.localStorage['currentTheme'] || 'vibrant-ink'
 
   var modeList = fs.readdirSync('src/vendor/mode')
   var head = document.getElementsByTagName('head')[0];
+
+  $("<div style='white-space: pre; overflow: auto;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
+
+  $(iframeDoc).find('head').append("<link class='theme-css' href='src/vendor/theme/"+currentTheme+".css' rel='stylesheet'>")
+
+  $('head .theme-css').attr('href', 'src/vendor/theme/' + currentTheme + '.css')
+
   $.each(modeList, function(index, mode){
     if(mode != '.DS_Store') {
       if(mode.match(/\.js/)) {
@@ -48,30 +57,40 @@ on page reload. Only coffeescript files placed here need the .js -->
           }
         });
       }
-      el = $("<option value='"+mode+"'>"+mode+"</option>");
+      if(mode === currentSyntax) {
+        el = $("<option value='"+mode+"' selected='selected'>"+mode+"</option>");
+      } else {
+        el = $("<option value='"+mode+"'>"+mode+"</option>");
+      }
       syntaxList.append(el);
+
     }
   });
+  syntaxList.prepend($("<option value=''>None</option>"));
 
   var themeFileList = fs.readdirSync('src/vendor/theme')
   $.each(themeFileList, function(index, theme){
     if(theme != '.DS_Store') {
       theme = theme.replace(/\.css/, '')
 
-      el = $("<option value='"+theme+"'>"+theme+"</option>")
+      if(theme === currentTheme) {
+        el = $("<option value='"+theme+"' selected='selected'>"+theme+"</option>")
+      }else{
+        el = $("<option value='"+theme+"'>"+theme+"</option>")
+      }
       themeList.append(el)
     }
   });
+  themeList.prepend($("<option value=''>None</option>"))
 
   var renderHtml = function(syntax, theme){
     editorContent = editor.getValue();
-    CodeMirror.runMode(editorContent, syntax || 'javascript', $('.output')[0])
-    $('.output')[0].className = "output CodeMirror CodeMirror-wrap cm-s-" + theme
+    CodeMirror.runMode(editorContent, syntax || 'javascript', iframeBody.find('.output')[0])
+    iframeBody.find('.output')[0].className = "output CodeMirror CodeMirror-wrap cm-s-" + theme
   }
-
   var editor = CodeMirror($('.console')[0], {
     mode: {
-      name: 'javascript',
+      name: currentTheme,
       useCPP: true
     },
     gutter: true,
@@ -84,7 +103,18 @@ on page reload. Only coffeescript files placed here need the .js -->
     onKeyEvent: function(){
       renderHtml(currentSyntax, currentTheme)
     }
-  })
+  });
+
+  // Not sure why this is needed... its not picking up the mode for some reason in
+  // the initial editor creation
+  setTimeout(function(){
+    console.log('BLAH')
+    editor.setOption('mode',{
+      name: currentSyntax,
+      useCPP: true
+    });
+    editor.refresh();
+  }, 300);
 
   $('.syntax').on('change', function(evt){
     currentSyntax = $(this).find('option:selected').val()
@@ -93,8 +123,9 @@ on page reload. Only coffeescript files placed here need the .js -->
       useCPP: true
     });
 
-    editor.refresh()
-    renderHtml(currentSyntax, currentTheme)
+    editor.refresh();
+    renderHtml(currentSyntax, currentTheme);
+    window.localStorage['currentSyntax'] = currentSyntax
   });
 
   $('.theme').on('change', function(evt){
@@ -103,6 +134,7 @@ on page reload. Only coffeescript files placed here need the .js -->
     renderHtml(currentSyntax, currentTheme)
     $('head .theme-css').attr('href', 'src/vendor/theme/' + currentTheme + '.css')
     editor.refresh()
+    window.localStorage['currentTheme'] = currentTheme
   });
 </script>
 </body>
