@@ -118,11 +118,20 @@ on page reload. Only coffeescript files placed here need the .js -->
     tabSize: 2,
     lineWrapping: true,
     autoFocus: true,
+    extraKeys: {
+      "Tab": function(cm) {
+          var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+          cm.replaceSelection(spaces, "end", "+input");
+        }
+    },
     onKeyEvent: function(){
       for (var i = 0; i < editor.lineCount(); i++) {
         var line = editor.getLine(i);
         if(line.match(/[\u201C\u201D\u2018\u2019]/)) {
           editor.setLine(i, line.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"'));
+        }
+        if(line.match(/\t/)) {
+          editor.setLine(i, line.replace(/\t/g, "  "));
         }
       };
       renderHtml(currentSyntax, currentTheme);
