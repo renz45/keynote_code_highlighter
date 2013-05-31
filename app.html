@@ -119,7 +119,13 @@ on page reload. Only coffeescript files placed here need the .js -->
     lineWrapping: true,
     autoFocus: true,
     onKeyEvent: function(){
-      renderHtml(currentSyntax, currentTheme)
+      for (var i = 0; i < editor.lineCount(); i++) {
+        var line = editor.getLine(i);
+        if(line.match(/[\u201C\u201D\u2018\u2019]/)) {
+          editor.setLine(i, line.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"'));
+        }
+      };
+      renderHtml(currentSyntax, currentTheme);
     }
   });
 
