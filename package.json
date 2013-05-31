@@ -5,7 +5,7 @@
   "window": {
     "frame": false,
     "toolbar": true,
-    "height": 780
+    "height": 725
   },
 
   "environment": "development"

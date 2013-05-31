@@ -12,14 +12,28 @@ on page reload. Only coffeescript files placed here need the .js -->
 <script src="src/vendor/codemirror.js"></script>
 <script src="src/vendor/runmode.js"></script>
 <script src="src/vendor/mode/javascript/javascript.js"></script>
+<style type="text/css">
+  body {
+    margin: 0;
+  }
 
+  iframe {
+    width: 100%; height: 400px;
+  }
+
+  .draggable {
+    -webkit-app-region: drag; 
+    background-color: #eee; 
+    width: 100%
+  }
+</style>
 </head>
 <body>
+<div class='draggable'></div>
 <select class='syntax'></select>
 <select class='theme'></select>
-<div style="-webkit-app-region: drag; background-color: #eee; width: 100%">Drag me!</div>
 <div class='console'></div>
-<iframe style='width: 100%; height: 400px;'></iframe>
+<iframe></iframe>
 
 <script>
   var iframeDoc = $('iframe')[0].contentDocument
@@ -34,7 +48,7 @@ on page reload. Only coffeescript files placed here need the .js -->
   var modeList = fs.readdirSync('src/vendor/mode')
   var head = document.getElementsByTagName('head')[0];
 
-  $("<div style='white-space: pre; overflow: auto; font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; padding: 5px;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
+  $("<div style='white-space: pre; overflow: auto; font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; padding: 5px; font-size: 12px;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
 
   $(iframeDoc).find('head').append("<link class='theme-css' href='src/vendor/theme/"+currentTheme+".css' rel='stylesheet'>")
 
@@ -95,8 +109,8 @@ on page reload. Only coffeescript files placed here need the .js -->
       name: currentTheme,
       useCPP: true
     },
-    gutter: true,
-    lineNumbers: true,
+    gutter: false,
+    lineNumbers: false,
     theme: currentTheme,
     indentUnit: 2,
     tabSize: 2,
