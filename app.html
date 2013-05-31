@@ -34,9 +34,11 @@ on page reload. Only coffeescript files placed here need the .js -->
   var modeList = fs.readdirSync('src/vendor/mode')
   var head = document.getElementsByTagName('head')[0];
 
-  $("<div style='white-space: pre; overflow: auto;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
+  $("<div style='white-space: pre; overflow: auto; font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; padding: 5px;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
 
   $(iframeDoc).find('head').append("<link class='theme-css' href='src/vendor/theme/"+currentTheme+".css' rel='stylesheet'>")
+
+  $(iframeDoc).find('body').css({'padding': '0', 'margin': 0})
 
   $('head .theme-css').attr('href', 'src/vendor/theme/' + currentTheme + '.css')
 
