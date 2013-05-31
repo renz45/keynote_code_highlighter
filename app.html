@@ -150,6 +150,7 @@ on page reload. Only coffeescript files placed here need the .js -->
     editor.setOption('theme',currentTheme);
     renderHtml(currentSyntax, currentTheme)
     $('head .theme-css').attr('href', 'src/vendor/theme/' + currentTheme + '.css')
+    $(iframeDoc).find('head .theme-css').attr('href', 'src/vendor/theme/' + currentTheme + '.css')
     editor.refresh()
     window.localStorage['currentTheme'] = currentTheme
   });
