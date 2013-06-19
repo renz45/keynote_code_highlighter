@@ -9,6 +9,12 @@ require textmate.
 This is super bare bones, it doesn't even have proper chrome like a close button.
 To quit the app just right click it in your doc and close it.
 
+I've recently added support for choosing a font and a font size. You have to type the name of
+the font into the field, since searching the available fonts on a system seems to be more
+work then its worth. As usual, it saves your settings when opening or closing, so you should
+only have to set them once.
+
+
 ##Packaging instructions(OSX)
 This is mostly for my reference.
 
