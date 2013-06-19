@@ -34,6 +34,9 @@ on page reload. Only coffeescript files placed here need the .js -->
 <div class='draggable'></div>
 <select class='syntax'></select>
 <select class='theme'></select>
+<label for='font-input'>Font</label>
+<input id='font-input' type='text'/>
+<input id='font-size-input' type='number'/>
 <div class='console'></div>
 <iframe></iframe>
 
@@ -46,11 +49,16 @@ on page reload. Only coffeescript files placed here need the .js -->
   var themeList = $('.theme')
   var currentSyntax = window.localStorage['currentSyntax'] || 'javascript'
   var currentTheme = window.localStorage['currentTheme'] || 'vibrant-ink'
+  var currentFont = window.localStorage['currentFont'] || 'monospace'
+  var currentFontSize = window.localStorage['currentFontSize'] || '12'
 
   var modeList = fs.readdirSync('src/vendor/mode')
   var head = document.getElementsByTagName('head')[0];
 
-  $("<div style='white-space: pre; overflow: auto; font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; padding: 5px; font-size: 12px;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
+  $('#font-input').val(currentFont);
+  $('#font-size-input').val(currentFontSize);
+
+  $("<div style='white-space: pre; overflow: auto; font-family: "+currentFont+"; padding: 5px; font-size: "+currentFontSize+"px;' class='output CodeMirror cm-s-"+currentTheme+" CodeMirror-wrap'></div>").appendTo(iframeBody)
 
   $(iframeDoc).find('head').append("<link class='theme-css' href='src/vendor/theme/"+currentTheme+".css' rel='stylesheet'>")
 
@@ -169,6 +177,26 @@ on page reload. Only coffeescript files placed here need the .js -->
     editor.refresh()
     window.localStorage['currentTheme'] = currentTheme
   });
+
+  $('#font-input').on('keyup', function(){
+    fontInput = $(this).val();
+
+    if(fontInput === '') {
+      fontInput = 'monospace';
+    }
+
+    iframeBody.find('.output').css({'font-family': fontInput});
+    window.localStorage['currentFontSize'] = fontInput;
+  });
+
+  updateFontSize = function(){
+    fontSize = $(this).val();
+    iframeBody.find('.output').css({'font-size': fontSize + "px"});
+    window.localStorage['currentFontSize'] = fontSize;
+  }
+
+  $('#font-size-input').on('change', updateFontSize);
+  $('#font-size-input').on('keyup', updateFontSize);
 </script>
 </body>
 </html>
